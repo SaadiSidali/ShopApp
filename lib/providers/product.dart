@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+import '../models/http_exception.dart';
 
 class Product with ChangeNotifier {
   final String id;
@@ -8,9 +13,22 @@ class Product with ChangeNotifier {
   final String imageUrl;
   bool isfavorite;
 
-  void toggleIsFavorite() {
+  Future<void> toggleIsFavorite() async {
+    final oldStatus = isfavorite;
     isfavorite = !isfavorite;
     notifyListeners();
+    final url = 'https://fluttercourseapp.firebaseio.com/products/$id.json';
+    try {
+      final response = await http.patch(
+        url,
+        body: json.encode(
+          {'isFavorite': isfavorite},
+        ),
+      );
+      if (response.statusCode >= 400) throw HttpException('OOps');
+    } catch (error) {
+      isfavorite = oldStatus;
+    }
   }
 
   Product({

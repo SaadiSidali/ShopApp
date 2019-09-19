@@ -7,6 +7,7 @@ import '../widgets/products_grid.dart';
 import '../providers/cart.dart';
 import '../widgets/badge.dart';
 import '../screens/cart_screen.dart';
+import '../providers/products.dart';
 
 enum FilterOptions { favorite, all }
 
@@ -17,6 +18,36 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _showOnlyFavorites = false;
+  var _isInited = true;
+  var _isLoading = false;
+  @override
+  void initState() {
+    // this would throw an error cause you don't have context yet ...
+    //
+    //
+    // you can use this
+    // Future.delayed(Duration.zero, () {
+    //   Provider.of<Products>(context).fetchAndSetProducts();
+    // });
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInited) {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<Products>(context).fetchAndSetProducts().then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+    _isInited = false;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +86,12 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           )
         ],
       ),
-      body: ProductsGrid(_showOnlyFavorites),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+              backgroundColor: Colors.pink,
+            ))
+          : ProductsGrid(_showOnlyFavorites),
     );
   }
 }

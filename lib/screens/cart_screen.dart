@@ -35,19 +35,7 @@ class CartScreen extends StatelessWidget {
                   SizedBox(
                     width: 5,
                   ),
-                  OutlineButton(
-                    borderSide: BorderSide(width: 1, color: Theme.of(context).primaryColor),
-                    onPressed: () {
-                      Provider.of<Orders>(context, listen: false)
-                          .addOrder(cart.items.values.toList(), cart.totalAmount);
-                      cart.clear();
-                    },
-                    child: Text(
-                      'Order NOW!',
-                      style: TextStyle(color: Theme.of(context).primaryColor),
-                    ),
-                    color: Theme.of(context).primaryColor,
-                  )
+                  OrderButton(cart: cart)
                 ],
               ),
             ),
@@ -67,6 +55,54 @@ class CartScreen extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key key,
+    @required this.cart,
+  }) : super(key: key);
+
+  final Cart cart;
+
+  @override
+  _OrderButtonState createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var _isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    return OutlineButton(
+      textColor: Theme.of(context).primaryColor,
+      borderSide: BorderSide(width: 1, color: Theme.of(context).primaryColor),
+      onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
+          ? null
+          : () async {
+              setState(() {
+                _isLoading = true;
+              });
+              await Provider.of<Orders>(context, listen: false)
+                  .addOrder(widget.cart.items.values.toList(), widget.cart.totalAmount);
+              setState(() {
+                _isLoading = false;
+              });
+              widget.cart.clear();
+            },
+      child: _isLoading
+          ? Padding(
+              padding: EdgeInsets.symmetric(vertical: 2),
+              child: CircularProgressIndicator(
+                strokeWidth: 1,
+                backgroundColor: Colors.pink,
+              ),
+            )
+          : Text(
+              'Order NOW!',
+            ),
+      color: Theme.of(context).primaryColor,
     );
   }
 }
