@@ -19,7 +19,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
     _isLoading = true;
     Future.delayed(Duration.zero).then((_) async {
       Provider.of<Orders>(context, listen: false).fetchAndSetOrders();
-      _isLoading = false;
+      // setState(() {
+        _isLoading = false;
+      // });
+      // print('object');
+    }).catchError((onError) {
+      print(onError);
     });
     super.initState();
   }
@@ -39,14 +44,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 backgroundColor: Colors.pink,
               ),
             )
-          : orderData.orders.length == 0
-              ? Center(
-                  child: Text('Wow ... such empty'),
-                )
-              : ListView.builder(
-                  itemCount: orderData.orders.length,
-                  itemBuilder: (ctx, i) => OrderItem(orderData.orders[i]),
-                ),
+          : ListView.builder(
+              itemCount: orderData.orders.length,
+              itemBuilder: (ctx, i) => OrderItem(orderData.orders[i]),
+            ),
     );
   }
 }

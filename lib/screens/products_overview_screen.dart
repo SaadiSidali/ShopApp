@@ -9,7 +9,7 @@ import '../providers/cart.dart';
 import '../widgets/badge.dart';
 import '../screens/cart_screen.dart';
 import '../providers/products.dart';
-import '../providers/auth.dart';
+// import '../providers/auth.dart';
 
 enum FilterOptions { favorite, all }
 
