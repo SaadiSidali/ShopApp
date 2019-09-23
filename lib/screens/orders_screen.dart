@@ -23,6 +23,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     });
     super.initState();
   }
+
   //TODO watch the 23rd video again cause you need to.
   @override
   Widget build(BuildContext context) {
@@ -38,10 +39,14 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 backgroundColor: Colors.pink,
               ),
             )
-          : ListView.builder(
-              itemCount: orderData.orders.length,
-              itemBuilder: (ctx, i) => OrderItem(orderData.orders[i]),
-            ),
+          : orderData.orders.length == 0
+              ? Center(
+                  child: Text('Wow ... such empty'),
+                )
+              : ListView.builder(
+                  itemCount: orderData.orders.length,
+                  itemBuilder: (ctx, i) => OrderItem(orderData.orders[i]),
+                ),
     );
   }
 }

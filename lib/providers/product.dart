@@ -13,16 +13,16 @@ class Product with ChangeNotifier {
   final String imageUrl;
   bool isfavorite;
 
-  Future<void> toggleIsFavorite() async {
+  Future<void> toggleIsFavorite(String auth, String userId) async {
     final oldStatus = isfavorite;
     isfavorite = !isfavorite;
     notifyListeners();
-    final url = 'https://fluttercourseapp.firebaseio.com/products/$id.json';
+    final url = 'https://fluttercourseapp.firebaseio.com/userFavorites/$userId/$id.json?auth=$auth';
     try {
-      final response = await http.patch(
+      final response = await http.put(
         url,
         body: json.encode(
-          {'isFavorite': isfavorite},
+          isfavorite
         ),
       );
       if (response.statusCode >= 400) throw HttpException('OOps');

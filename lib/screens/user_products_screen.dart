@@ -10,12 +10,12 @@ class UserProductsScreen extends StatelessWidget {
   static const routeName = '/user-products';
 
   Future<void> _refrechProducts(BuildContext context) async {
-    await Provider.of<Products>(context).fetchAndSetProducts();
+    await Provider.of<Products>(context, listen: false).fetchAndSetProducts(true);
   }
 
   @override
   Widget build(BuildContext context) {
-    final productsData = Provider.of<Products>(context);
+    // final productsData = Provider.of<Products>(context);
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
@@ -29,27 +29,40 @@ class UserProductsScreen extends StatelessWidget {
           )
         ],
       ),
-      body: RefreshIndicator(
-        color: Theme.of(context).primaryColor,
-        
-        
-        onRefresh: () => _refrechProducts(context),
-        child: Padding(
-          padding: EdgeInsets.all(10),
-          child: ListView.builder(
-            itemCount: productsData.items.length,
-            itemBuilder: (ctx, i) => Column(
-              children: <Widget>[
-                UserProductItem(
-                  productsData.items[i].id,
-                  productsData.items[i].title,
-                  productsData.items[i].imageUrl,
+      body: FutureBuilder(
+        future: _refrechProducts(context),
+        builder: (ctx, snapshot) => snapshot.connectionState == ConnectionState.waiting
+            ? Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.pink,
                 ),
-                Divider()
-              ],
-            ),
-          ),
-        ),
+              )
+            : RefreshIndicator(
+                color: Theme.of(context).primaryColor,
+                onRefresh: () => _refrechProducts(context),
+                child: Consumer<Products>(
+                  builder: (ctx, productsData, s) => Padding(
+                    padding: EdgeInsets.all(10),
+                    child: productsData.items.length == 0
+                          ? Center(
+                              child: Text('Wow ... such empty.'),
+                            )
+                          : ListView.builder(
+                      itemCount: productsData.items.length,
+                      itemBuilder: (ctx, i) =>  Column(
+                              children: <Widget>[
+                                UserProductItem(
+                                  productsData.items[i].id,
+                                  productsData.items[i].title,
+                                  productsData.items[i].imageUrl,
+                                ),
+                                Divider()
+                              ],
+                            ),
+                    ),
+                  ),
+                ),
+              ),
       ),
     );
   }

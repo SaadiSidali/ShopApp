@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/app_drawer.dart';
@@ -8,6 +9,7 @@ import '../providers/cart.dart';
 import '../widgets/badge.dart';
 import '../screens/cart_screen.dart';
 import '../providers/products.dart';
+import '../providers/auth.dart';
 
 enum FilterOptions { favorite, all }
 
@@ -38,7 +40,9 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       setState(() {
         _isLoading = true;
       });
-      Provider.of<Products>(context).fetchAndSetProducts().then((_) {
+      Provider.of<Products>(context).fetchAndSetProducts(
+        
+      ).then((_) {
         setState(() {
           _isLoading = false;
         });
@@ -50,6 +54,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
