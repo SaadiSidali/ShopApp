@@ -40,8 +40,10 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(
+          debugShowCheckedModeBanner: false,
           title: 'Thou Shop',
           theme: ThemeData(
+            
             primarySwatch: Colors.purple,
             accentColor: Colors.yellow,
             fontFamily: 'Lato',
